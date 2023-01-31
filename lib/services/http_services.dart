@@ -20,7 +20,7 @@ class HttpService {
   }
 
   Future<List<Result>> getMultipleData() async {
-    Response response = await get(Uri.parse("${ApiString.URL}+${ApiString.user}"));
+    Response response = await get(Uri.parse(ApiString.URL+ApiString.user));
     print(response.statusCode);
     if (response.statusCode == 200) {
       User userData = User.fromJson(json.decode(response.body));

@@ -25,46 +25,80 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Random User Data"),
+        backgroundColor: Colors.black,
+        elevation: 1,
       ),
-      body: Column(
-        children: [
-          FutureBuilder<List<Result>>(
-              future: httpService.getMultipleData(),
-              builder: (context, snapShot) {
-                if (snapShot.hasData) {
-                  List<Result> data = snapShot.data!;
-                  return Column(
-                    children: [
-                      TextFormField(
-                        controller: ApiString.user,
-                        onChanged: (val) {
-                          ApiString.user.text = val;
-                        },
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    title: Text("${data[index].name!.title} ${data[index].name!.first} ${data[index].name!.last}"),
-                                    leading: CircleAvatar(
-                                      backgroundImage: NetworkImage("${data[index].picture!.thumbnail}"),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        child: Column(
+          children: [
+            TextFormField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                filled: true,
+                hintText: "Enter number of user here",
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.black,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                    color: Color(0xff777777),
+                    width: 2,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(12),
+                fillColor: Colors.white,
+
+              ),
+
+              onChanged: (val){
+                setState(() {
+                  ApiString.user = val;
+                });
+              },
+            ),
+            Expanded(
+              child: FutureBuilder<List<Result>>(
+                  future: httpService.getMultipleData(),
+                  builder: (context, snapShot) {
+                    if (snapShot.hasData) {
+                      List<Result> data = snapShot.data!;
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: ListTile(
+                                      title: Text("Name : ${data[index].name!.title} ${data[index].name!.first} ${data[index].name!.last}"),
+                                      subtitle: Text("Email : ${data[index].email!}"),
+                                      leading: CircleAvatar(
+                                        backgroundImage: NetworkImage("${data[index].picture!.thumbnail}"),
+                                      ),
+                                      onTap: (){
+                                        Navigator.pushNamed(context,'userDetails',arguments: data);
+                                      },
+                                      tileColor: Colors.white,
                                     ),
-                                  ),
-                                ],
-                              );
-                            }),
-                      ),
-                    ],
-                  );
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              }),
-        ],
+                                  );
+                                }),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  }),
+            ),
+          ],
+        ),
       ),
+      backgroundColor: Colors.white70,
     );
   }
 }
